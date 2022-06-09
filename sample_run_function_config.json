@@ -1,0 +1,11 @@
+{
+	"serverUrl" : "<url of the server>",
+	"userId" : "<login user name>",
+	"password" : "<password>",
+	"orgName" : "cloud",
+	"appName" : "main",
+	"functionName": "<name of the function>",
+	"parameterFile" : "<file path where the parameter are store relative to project root>",
+	"parameters" : {},
+	"document" : "parameterFile takes precendence if it is specified. Else 'parameters' is used."
+}

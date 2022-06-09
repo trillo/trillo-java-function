@@ -1,0 +1,14 @@
+.idea
+.project
+.settings
+/.settings
+.DS_Store
+.classpath
+target
+logs
+bin
+trillo_config.json
+CICSBlueEHRImport.java
+CICSBlueEHRImport.json
+/trillo-java-function.iml
+config/*
