@@ -6,7 +6,7 @@ import java.util.List;
 public class CallLogger {
   private int level = 2;
   private boolean auditLogEnabled = true;
-  private boolean collectCallLogs = true;
+  private boolean collectCallLogs = false;
   private List<Object> logs = null;
   
   public boolean isDebugOn() {
@@ -64,11 +64,11 @@ public class CallLogger {
     addMsg("Info", msg);
   }
   
-  public void warning(String msg) {
+  public void warn(String msg) {
     if (!isCollectCallLogs() || level > 3) {
       return;
     }
-    addMsg("Warning", msg);
+    addMsg("warn", msg);
   }
   
   public void error(String msg) {
@@ -106,7 +106,7 @@ public class CallLogger {
       setDebugLevel(true);
     } else if ("info".equals(logLevel)) {
       setInfoLevel(true);
-    } else if ("warning".equals(logLevel)) {
+    } else if ("warn".equals(logLevel)) {
       setWarningLevel(true);
     } else if ("error".equals(logLevel)) {
       setErrorLevel(true);
