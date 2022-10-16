@@ -262,13 +262,17 @@ public class LogApi {
   }
   
   public static final void auditLog2(String action, String type, String summary, Object detail, String sourceUid, Object ...args) {
-    String json = makeJSON(args, true);
+    String nameValueJson = makeNameValueJson(args);
+    if (nameValueJson != null) {
+      summary += " " + nameValueJson;
+    }
     String detailStr = null;
     if (detail instanceof String) {
       detailStr = (String) detail;
     } else if (detail instanceof Map<?, ?>) {
       detailStr = Util.asJSONPrettyString(detail);
     }
+    String json = makeMapParametersJson(args);
     _auditLog(type, summary, detailStr, json, action, sourceUid);
   }
   
@@ -318,7 +322,7 @@ public class LogApi {
 
     msg = s + msg;
     
-    String json = makeJSON(args, false);
+    String json = makeNameValueJson(args);
     
     if (json != null) {
       msg += " " + json;
@@ -327,8 +331,7 @@ public class LogApi {
     _log.log(null, _className, level, s + msg, args, t);
   }
   
-  @SuppressWarnings("unchecked")
-  private static String makeJSON(Object[] args, boolean pretty) {
+  private static String makeNameValueJson(Object[] args) {
     if (args == null || args.length == 0) {
       return null;
     }
@@ -350,8 +353,6 @@ public class LogApi {
         } else {
           break;
         }
-      } else if (name instanceof Map<?, ?>) {
-        m.putAll((Map<String, Object>) name);
       }
       i++;
     }
@@ -360,11 +361,34 @@ public class LogApi {
       return null;
     }
     
-    if (pretty) {
-      return Util.asJSONPrettyString(m);
-    } else {
-      return Util.asJSONString(m);
+    return Util.asJSONString(m);
+  }
+  
+  @SuppressWarnings("unchecked")
+  private static String makeMapParametersJson(Object[] args) {
+    if (args == null || args.length == 0) {
+      return null;
     }
+    
+    Map<String, Object> m = new LinkedHashMap<String, Object>();
+    
+    int i =0;
+    int n = args.length;
+    
+    Object v;
+    while (i < n) {
+      v = args[i];
+      if (v instanceof Map<?, ?>) {
+        m.putAll((Map<String, Object>) v);
+      }
+      i++;
+    }
+    
+    if (m.size() == 0) {
+      return null;
+    }
+    
+    return Util.asJSONPrettyString(m);
   }
   
   
