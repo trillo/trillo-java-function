@@ -5,7 +5,6 @@ import java.util.List;
 
 public class CallLogger {
   private int level = 2;
-  private boolean auditLogEnabled = true;
   private boolean collectCallLogs = false;
   private List<Object> logs = null;
   
@@ -111,14 +110,6 @@ public class CallLogger {
     } else if ("error".equals(logLevel)) {
       setErrorLevel(true);
     }
-  }
-  
-  public boolean isAuditLogEnabled() {
-    return auditLogEnabled;
-  }
-  
-  public void setAuditLogEnabled(boolean auditLogEnabled) {
-    this.auditLogEnabled = auditLogEnabled;
   }
   
   public boolean isCollectCallLogs() {

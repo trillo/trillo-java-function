@@ -12,12 +12,14 @@
 package com.collager.trillo.util;
 
 import java.lang.invoke.MethodHandles;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
 import com.collager.trillo.model.AuditLogUtil;
 import com.collager.trillo.pojo.Result;
+import io.trillo.util.Proxy;
 
 /** Log Api. */
 //Using this site to convert its javadocs into markdown
@@ -49,25 +51,8 @@ public class LogApi {
   }
   
   /**
-   * Disable audit log, by default it is enabled.
-   * Audit log is logging to Trillo DB. It is used for a coarse business events and background tasks to
-   * isolate errors per task. The level of audit logging depends on the setLogLevel call above. 
-   * During some operations, you may choose to disable logging independent of log level (to console)
-   */
-  public static void disableAuditLog() {
-    callLogger().setAuditLogEnabled(false);;
-  }
-  
-  /**
-   * Enabled audit log. See above for the description of audit log.
-   */
-  public static void enableAuditLog() {
-    callLogger().setAuditLogEnabled(false);;
-  }
-  
-  /**
    * Disable log collections for the thread. Logs are collected for a call and sent back the client
-   * in the result. This is useful for debugging. By default it is disabled. You can disable the colleciton
+   * in the result. This is useful for debugging. By default it is disabled. You can disable the collection
    * of the logs (it should be disabled in the production unless you wish to trouble shoot something).
    */
   public static void disableLogsCollection() {
@@ -80,95 +65,99 @@ public class LogApi {
   public static void enableLogsCollection() {
     callLogger().setCollectCallLogs(true);;
   }
-  
-  public static final void debug(String msg) {
-    debug(msg, (Object[])null);
-  }
- 
-  public static final void debug(String msg, Object... parameters) {
+
+  public static final void debug(String msg, Object... args) {
     CallLogger cl = callLogger();
     if (cl.isDebugOn()) {
-      log(LocationAwareLogger.DEBUG_INT, msg, parameters, null);
+      log(LocationAwareLogger.DEBUG_INT, msg, args, null);
       cl.debug(msg);
     }
   }
-  
-  public static final void debug(String msg, Throwable t) {
+
+  public static final void debug(String msg, Throwable t, Object... args) {
     CallLogger cl = callLogger();
     if (cl.isDebugOn()) {
-      log(LocationAwareLogger.DEBUG_INT, msg, null, t);
+      log(LocationAwareLogger.DEBUG_INT, msg, args, t);
       cl.debug(msg);
     }
   }
-  
-  public static final void info(String msg) {
-    info(msg, (Object[])null);
-  }
-  
-  public static final void info(String msg, Object... parameters) {
+
+  public static final void info(String msg, Object... args) {
     CallLogger cl = callLogger();
     if (cl.isInfoOn()) {
-      log(LocationAwareLogger.INFO_INT, msg, parameters, null);
+      log(LocationAwareLogger.INFO_INT, msg, args, null);
       cl.info(msg);
     }
   }
-  
-  public static final void info(String msg, Throwable t) {
+
+  public static final void info(String msg, Throwable t, Object... args) {
     CallLogger cl = callLogger();
     if (cl.isInfoOn()) {
-      log(LocationAwareLogger.INFO_INT, msg, null, t);
+      log(LocationAwareLogger.INFO_INT, msg, args, t);
       cl.info(msg);
     }
   }
-  
-  public static final void warn(String msg) {
-    warn(msg, (Object[])null);
-  }
-  
-  public static final void warn(String msg, Object... parameters) {
-   CallLogger cl = callLogger();
-   if (cl.isWarningOn()) {
-     log(LocationAwareLogger.WARN_INT, msg, parameters, null);
-     cl.warn(msg);
-   }
-  }
-  
-  public static final void warn(String msg, Throwable t) {
+
+  public static final void warn(String msg, Object... args) {
     CallLogger cl = callLogger();
     if (cl.isWarningOn()) {
-      log(LocationAwareLogger.WARN_INT, msg, null, t);
+      log(LocationAwareLogger.WARN_INT, msg, args, null);
       cl.warn(msg);
     }
   }
 
-  public static final void error(String msg) {
-    error(msg, (Object[])null);
-  }
-  
-  public static final void error(String msg, Object... parameters) {
+  public static final void warn(String msg, Throwable t, Object... args) {
     CallLogger cl = callLogger();
     if (cl.isWarningOn()) {
-      log(LocationAwareLogger.ERROR_INT, msg, parameters, null);
+      log(LocationAwareLogger.WARN_INT, msg, args, t);
       cl.warn(msg);
     }
-   }
-   
-   public static final void error(String msg, Throwable t) {
-     CallLogger cl = callLogger();
-     if (cl.isWarningOn()) {
-       log(LocationAwareLogger.ERROR_INT, msg, null, t);
-       cl.warn(msg);
-     }
-   }
-  
-  public static final Result infoR(String msg) {
-    info(msg);
+  }
+
+  public static final void error(String msg, Object... args) {
+    CallLogger cl = callLogger();
+    if (cl.isWarningOn()) {
+      log(LocationAwareLogger.ERROR_INT, msg, args, null);
+      cl.warn(msg);
+    }
+  }
+
+  public static final void error(String msg, Throwable t, Object... args) {
+    CallLogger cl = callLogger();
+    if (cl.isWarningOn()) {
+      log(LocationAwareLogger.ERROR_INT, msg, args, t);
+      cl.warn(msg);
+    }
+  }
+
+  public static final Result infoR(String msg, Object... args) {
+    info(msg, args);
     return Result.getSuccessResult(msg);
   }
-  
-  public static final Result warnR(String msg) {
-    warn(msg);
+
+  public static final Result infoR(String msg, Throwable t, Object... args) {
+    info(msg, t, args);
     return Result.getSuccessResult(msg);
+  }
+
+  public static final Result warnR(String msg, Object... args) {
+    warn(msg, args);
+    return Result.getSuccessResult(msg);
+  }
+
+  public static final Result warnR(String msg, Throwable t, Object... args) {
+    warn(msg, t, args);
+    return Result.getSuccessResult(msg);
+  }
+
+  public static final Result errorR(String msg, Object... args) {
+    error(msg, args);
+    return Result.getFailedResult(msg);
+  }
+
+  public static final Result errorR(String msg, Throwable t, Object... args) {
+    error(msg, t, args);
+    return Result.getFailedResult(msg);
   }
   
   public static final Result errorR(String msg) {
@@ -190,10 +179,7 @@ public class LogApi {
    * Audit log object.
    *
    * @param summary the summary
-   * @param detail detailed log message (such as description of error message)
-   * @param json any associated json object (such as the object being saved that failed)
-   * @param action the action
-   * @param sourceUid
+   * @param args detailed log message (such as description of error message)
    */
   public static final void auditLogInfo(String summary, String ...args) {
     auditLog("info", summary, args);
@@ -220,43 +206,41 @@ public class LogApi {
    *
    * @param action the action
    * @param summary the summary
-   * @param detail detailed log message (such as description of error message)
-   * @param json any associated json object (such as the object being saved that failed)
-   * @param sourceUid
+   * @param args detailed log message (such as description of error message)
    */
-  public static final void auditLogInfo2(String action, String summary, String ...args) {
-    auditLog2(action, "info", summary, args);
+  public static final void auditInfo(String action, String summary, Object detail, String sourceUid, Object ...args) {
+    auditLog2(action, "info", summary, detail, sourceUid, args);
   }
   
-  public static final void auditLogWarn2(String action, String summary, String ...args) {
-    auditLog2(action, "warn", summary, args);
+  public static final void auditWarn(String action, String summary, Object detail, String sourceUid, Object ...args) {
+    auditLog2(action, "warn", summary, detail, sourceUid, args);
   }
   
-  public static final void auditLogError2(String action, String summary, String ...args) {
-    auditLog2(action, "error", summary, args);
+  public static final void auditError(String action, String summary, Object detail, String sourceUid, Object ...args) {
+    auditLog2(action, "error", summary, detail, sourceUid, args);
   }
   
-  public static final void auditLogCritical2(String action, String summary, String ...args) {
-    auditLog2(action, "critical", summary, args);
+  public static final void auditCritical(String action, String summary, Object detail, String sourceUid, Object ...args) {
+    auditLog2(action, "critical", summary, detail, sourceUid, args);
   }
   
-  public static final Result auditLogInfo2R(String action, String summary, String ...args) {
-    auditLogInfo2(action, summary, args);
+  public static final Result auditInfoR(String action, String summary, Object detail, String sourceUid, Object ...args) {
+    auditInfo(action, summary, detail, sourceUid, args);
     return Result.getSuccessResult(summary);
   }
   
-  public static final Result auditLogWarn2R(String action, String summary, String ...args) {
-    auditLogWarn2(action, summary, args);
+  public static final Result auditWarnR(String action, String summary, Object detail, String sourceUid, Object ...args) {
+    auditWarn(action, summary, detail, sourceUid, args);
     return Result.getSuccessResult(summary);
   }
   
-  public static final Result auditLogError2R(String action, String summary, String ...args) {
-    auditLogError2(action, summary, args);
+  public static final Result auditErrorR(String action, String summary, Object detail, String sourceUid, Object ...args) {
+    auditError(action, summary, detail, sourceUid, args);
     return Result.getFailedResult(summary);
   }
   
-  public static final Result auditLogCritical2R(String action, String summary, String ...args) {
-    auditLogCritical2(action, summary, args);
+  public static final Result auditCriticalR(String action, String summary, Object detail, String sourceUid, Object ...args) {
+    auditCritical(action, summary, detail, sourceUid, args);
     return Result.getFailedResult(summary);
   }
   /**
@@ -264,10 +248,7 @@ public class LogApi {
    *
    * @param type (debug, info, warning, error)
    * @param summary the summary
-   * @param detail detailed log message (such as description of error message)
-   * @param json any associated json object (such as the object being saved that failed)
-   * @param action the action
-   * @param parentUid
+   * @param args detailed log message (such as description of error message)
    */
   public static final void auditLog(String type, String summary, String ...args) {
    String[] sl = {"", "", "", ""};
@@ -280,33 +261,26 @@ public class LogApi {
    _auditLog(type, summary, sl[0], sl[1], sl[2], sl[3]);
   }
   
-  public static final void auditLog2(String action, String type, String summary, String ...args) {
-    String[] sl = {"", "", ""};
-    for (int i=0; i<args.length && i<sl.length; i++) {
-      sl[i] = args[i];
+  public static final void auditLog2(String action, String type, String summary, Object detail, String sourceUid, Object ...args) {
+    String json = makeJSON(args, true);
+    String detailStr = null;
+    if (detail instanceof String) {
+      detailStr = (String) detail;
+    } else if (detail instanceof Map<?, ?>) {
+      detailStr = Util.asJSONPrettyString(detail);
     }
-    for (int i = args.length; i<sl.length; i++) {
-      sl[i] = "";
-    }
-    _auditLog(type, summary, sl[0], sl[1], action, sl[2]);
-   }
+    _auditLog(type, summary, detailStr, json, action, sourceUid);
+  }
   
   private static final void _auditLog(String type, String summary, String detail, String json, String action, String sourceUid) {
-    if (canAuditLog(type)) {
-      auditLog(AuditLogUtil.makeAuditLog(type, sourceUid, action, summary, detail, json));
-    }
-    logToConsole(type, (StringUtils.isNotBlank(action) ? action + ", " : "") + summary);
-    if (StringUtils.isNotBlank(detail)) {
+    auditLog(AuditLogUtil.makeAuditLog(type, sourceUid, action, summary, detail, json));
+    logToConsole(type, summary);
+    /* if (StringUtils.isNotBlank(detail)) {
       logToConsole(type, detail);
     }
     if (StringUtils.isNotBlank(json)) {
       logToConsole(type, json);
-    }
-  }
-  
-  private static boolean canAuditLog(String type) {
-    CallLogger cl = callLogger();
-    return cl.isAuditLogEnabled();
+    } */
   }
   
   public static void logToConsole(String type, String msg) {
@@ -323,8 +297,74 @@ public class LogApi {
     }
   }
   
-  private static void log(int level, String msg, Object[] parameters, Throwable t) {
-    _log.log(null, _className, level, msg, parameters, t);
+  private static void log(int level, String msg, Object[] args, Throwable t) {
+   
+    String userId = Proxy.getUserId();
+    if (StringUtils.isBlank(userId) || "guest".equalsIgnoreCase(userId)) {
+      userId = "";
+    }
+    
+    String txId = "";
+
+    String s;
+
+    if (userId.isEmpty() && txId.isEmpty()) {
+      s = "";
+    } else if (txId.isEmpty()) {
+      s = "(" + userId + ") ";
+    } else {
+      s = "(" + userId + "|" + txId + ") ";
+    }
+
+    msg = s + msg;
+    
+    String json = makeJSON(args, false);
+    
+    if (json != null) {
+      msg += " " + json;
+    }
+
+    _log.log(null, _className, level, s + msg, args, t);
+  }
+  
+  @SuppressWarnings("unchecked")
+  private static String makeJSON(Object[] args, boolean pretty) {
+    if (args == null || args.length == 0) {
+      return null;
+    }
+    
+    Map<String, Object> m = new LinkedHashMap<String, Object>();
+    
+    int i =0;
+    int n = args.length;
+    
+    Object name;
+    Object value;
+    while (i < n) {
+      name = args[i];
+      if (name instanceof String) {
+        i++;
+        if (i < n) {
+          value = args[i];
+          m.put((String) name, value);
+        } else {
+          break;
+        }
+      } else if (name instanceof Map<?, ?>) {
+        m.putAll((Map<String, Object>) name);
+      }
+      i++;
+    }
+    
+    if (m.size() == 0) {
+      return null;
+    }
+    
+    if (pretty) {
+      return Util.asJSONPrettyString(m);
+    } else {
+      return Util.asJSONString(m);
+    }
   }
   
   

@@ -299,12 +299,12 @@ public class Util {
     }
   }
  
-  public static String asUid(String className, String id) {
+  public static String asUid(String className, Object id) {
     return className + "." + id;
   }
 
-  public static String asUid(String className, long id) {
-    return className + "." + id;
+  public static String asUid(String className) {
+    return className + ".";
   }
 
   public static String getCurrentLanguage() {
