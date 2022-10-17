@@ -42,7 +42,7 @@ public class UpdateByQuery implements Loggable, TrilloFunction {
                 "SET gpu_name=\'RTX 3090\'\n" +
                 "WHERE cpu_name=\'Ryzen 3700x\';";
 
-        return DSApi.updateByQuery("ComputerInfo", "",oneEntity,"updated using query");
+        return DSApi.updateByQuery("ComputerInfo", query, oneEntity);
 
 
     }

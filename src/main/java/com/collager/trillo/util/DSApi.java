@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import com.collager.trillo.model.DataIterator;
 import com.collager.trillo.model.DataRequest;
+import com.collager.trillo.model.DataResult;
 
 public class DSApi extends BaseApi {
   
@@ -55,154 +56,121 @@ public class DSApi extends BaseApi {
   public static Object queryMany(String className, String whereClause, boolean includeDeleted) {
     return remoteCall("DSApi", "queryMany", className, whereClause, includeDeleted);
   }
+  
+  public static Object queryOneBySqlStatement(String sqlQuery) {
+    return remoteCall("DSApi", "queryOneBySqlStatement", sqlQuery);
+  }
+  
+  public static Object queryBySqlStatement(String sqlQuery) {
+    return remoteCall("DSApi", "queryBySqlStatement", sqlQuery);
+  }
+  
+  public static Object queryOneBySqlStatement(String dsName, String sqlQuery) {
+    return remoteCall("DSApi", "queryOneBySqlStatement", dsName, sqlQuery);
+  }
+  
+  public static Object queryBySqlStatement(String dsName, String sqlQuery) {
+    return remoteCall("DSApi", "queryBySqlStatement", dsName, sqlQuery);
+  }
 
   public static Object save(String className, Object entity) {
     return remoteCall("DSApi", "save", className, entity);
-  }
-
-  public static Object save(String className, Object entity, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "save", className, entity, auditMsg);
   }
 
   public static Object saveMany(String className, Iterable<Object> entities) {
     return remoteCall("DSApi", "saveMany", className, entities);
   }
 
-  public static Object saveMany(String className, Iterable<Object> entities, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "saveMany", className, entities, auditMsg);
+  public static Object saveMapList(String className, List<Map<String, Object>> entities) {
+    return remoteCall("DSApi", "saveMapList", className, entities);
   }
 
   public static Object saveManyIgnoreError(String className, Iterable<Object> entities) {
     return remoteCall("DSApi", "saveManyIgnoreError", className, entities);
   }
   
-  public static Object saveManyIgnoreError(String className, Iterable<Object> entities, String auditMsg) {
-    return remoteCall("DSApi", "saveManyIgnoreError", className, entities, auditMsg);
-  }
-
   public static Object update(String className, String id, String attrName, Object value) {
     return remoteCall("DSApi", "update", className, id, attrName, value);
-  }
-  
-  public static Object update(String className, String id, String attrName, Object value, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "update", className, id, attrName, value, auditMsg);
   }
   
   public static Object updateMany(String className, List<String> ids, String attrName, Object value) {
     return remoteCall("DSApi", "updateMany", className, ids, attrName, value);
   }
-
-  public static Object updateMany(String className, List<String> ids, String attrName, Object value, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "updateMany", className, ids, attrName, value, auditMsg);
-  }
-
   
   public static Object update(String className, String id, Map<String, Object> updateAttrs) {
     return remoteCall("DSApi", "update", className, id, updateAttrs);
   }
   
-  public static Object update(String className, String id, Map<String, Object> updateAttrs, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "update", className, id, updateAttrs, auditMsg);
-  }
- 
   public static Object updateMany(String className, List<String> ids, Map<String, Object> updateAttrs) {
     return remoteCall("DSApi", "updateMany", className, ids, updateAttrs);
   }
-  
-  public static Object updateMany(String className, List<String> ids, Map<String, Object> updateAttrs,
-      String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "updateMany", className, ids, updateAttrs, auditMsg);
-  }
-
  
   public static Object updateByQuery(String className, String query, Map<String, Object> updateAttrs) {
     return remoteCall("DSApi", "updateByQuery", className, query, updateAttrs);
-  }
-  
-  public static Object updateByQuery(String className, String query, Map<String, Object> updateAttrs, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "updateByQuery", className, query, updateAttrs, auditMsg);
   }
   
   public static Object delete(String className, String id, boolean permanent) {
     return remoteCall("DSApi", "delete", className, id, permanent);
   }
   
-  public static Object delete(String className, String id, boolean permanent, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "delete", className, id, permanent, auditMsg);
-  }
-
   public static Object deleteMany(String className, Iterable<String> ids, boolean permanent) {
     return remoteCall("DSApi", "deleteMany", className, ids, permanent);
   }
 
-  public static Object deleteMany(String className, Iterable<String> ids, boolean permanent, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "deleteMany", className, ids, permanent, auditMsg);
-  }
 
   public static Object deleteByQuery(String className, String query, boolean permanent) {
     return remoteCall("DSApi", "deleteByQuery", className, query, permanent);
-  }
-
-  public static Object deleteByQuery(String className, String query, boolean permanent, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "deleteByQuery", className, query, permanent, auditMsg);
   }
   
   public static Object bulkOp(String className, String opName, List<Map<String, Object>> list) {
     return remoteCall("DSApi", "bulkOp", className, opName, list);
   }
   
-  public static Object executeNamedQuery(String dsName, String queryName) {
-    return remoteCall("DSApi", "executeNamedQuery", dsName, queryName);
+  public static Object executeNamedQuery(String queryName) {
+    return convertToDataResult(remoteCall("DSApi", "executeNamedQuery", queryName));
   }
   
-  public static Object executeNamedQuery(String dsName, String queryName, boolean onlyOneRow) {
-    return remoteCall("DSApi", "executeNamedQuery", dsName, queryName, onlyOneRow);
+  
+  public static Object executeNamedQuery(String queryName, boolean onlyOneRow) {
+    return convertToDataResult(remoteCall("DSApi", "executeNamedQuery", queryName, onlyOneRow));
   }
   
-  public static Object executeNamedQuery(String dsName, String queryName, Map<String, Object> params) {
-    return remoteCall("DSApi", "executeNamedQuery", dsName, queryName, params);
+  public static Object executeNamedQuery(String queryName, Map<String, Object> params) {
+    return convertToDataResult(remoteCall("DSApi", "executeNamedQuery", queryName, params));
   }
 
-  public static Object executeNamedQuery(String dsName, String queryName,
+  public static Object executeNamedQuery(String queryName,
       Map<String, Object> params, boolean onlyOneRow) {
-    return remoteCall("DSApi", "executeNamedQuery", dsName, queryName, params, onlyOneRow);
+    return convertToDataResult(remoteCall("DSApi", "executeNamedQuery", queryName, params, onlyOneRow));
   }
   
-  public static Object executePrepareStatement(String dsName, String sqlStatement, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "executePrepareStatement", dsName, sqlStatement, auditMsg);
+  @Deprecated 
+  /* dsName is not required, instead named query stores the dsName. */
+  public static Object executeNamedQuery(String dsName, String queryName) {
+    return convertToDataResult(remoteCall("DSApi", "executeNamedQuery", dsName, queryName));
+  }
+  
+  @Deprecated 
+  /* dsName is not required, instead named query stores the dsName. */
+  public static Object executeNamedQuery(String dsName, String queryName, boolean onlyOneRow) {
+    return convertToDataResult(remoteCall("DSApi", "executeNamedQuery", dsName, queryName, onlyOneRow));
+  }
+  
+  @Deprecated 
+  /* dsName is not required, instead named query stores the dsName. */
+  public static Object executeNamedQuery(String dsName, String queryName, Map<String, Object> params) {
+    return convertToDataResult(remoteCall("DSApi", "executeNamedQuery", dsName, queryName, params));
+  }
+
+  @Deprecated 
+  /* dsName is not required, instead named query stores the dsName. */
+  public static Object executeNamedQuery(String dsName, String queryName,
+      Map<String, Object> params, boolean onlyOneRow) {
+    return convertToDataResult(remoteCall("DSApi", "executeNamedQuery", dsName, queryName, params, onlyOneRow));
+  }
+  
+  public static Object executePrepareStatement(String dsName, String sqlStatement) {
+    return remoteCall("DSApi", "executePrepareStatement", dsName, sqlStatement);
   }
   
   public static Object executePrepareStatement(String dsName, String sqlStatement, Map<String, Object> params) {
@@ -210,14 +178,11 @@ public class DSApi extends BaseApi {
   }
   
   public static Object executePrepareStatement(String dsName, String sqlStatement,
-      List<Object> params, String auditMsg) {
+      List<Object> params) {
     if (params == null) {
       params = new ArrayList<Object>();
     }
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "executePrepareStatement", dsName, sqlStatement, params, auditMsg);
+    return remoteCall("DSApi", "executePrepareStatement", dsName, sqlStatement, params);
   }
   
   public static Object executeSqlWriteStatement(String dsName, String sqlStatement) {
@@ -229,14 +194,6 @@ public class DSApi extends BaseApi {
     return remoteCall("DSApi", "executeSqlWriteStatement", dsName, sqlStatement, params);
   }
 
-  public static Object executeSqlWriteStatement(String dsName, String sqlStatement,
-      Map<String, Object> params, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "executeSqlWriteStatement", dsName, sqlStatement, params, auditMsg);
-  }
-  
   public static Object tenantByName(String tenantName) {
     return remoteCall("DSApi", "tenantByName", tenantName);
   }
@@ -269,13 +226,6 @@ public class DSApi extends BaseApi {
     return remoteCall("DSApi", "emptyTable", className);
   }
 
-  public static Object emptyTable(String className, String auditMsg) {
-    if (auditMsg == null) {
-      auditMsg = "";
-    }
-    return remoteCall("DSApi", "emptyTable", className, auditMsg);
-  }
-  
   public static Object saveFileOp(String fileName, String folderName, 
       String op, String functionName, String status, String message) {
     return remoteCall("DSApi", "saveFileOp", fileName, folderName, op, functionName, status, message);
@@ -285,8 +235,6 @@ public class DSApi extends BaseApi {
       String op, String functionName, String status, String message) {
     return remoteCall("DSApi", "saveFileOp", fileId, fileName, folderName, op, functionName, status, message);
   }
-  
-  
   
   public static Object getFileOp(String fileId, 
       String op) {
@@ -342,10 +290,45 @@ public class DSApi extends BaseApi {
   }
   
   public static void roolbackTx() {
-    /* In dev-env, all DB calls are transactional therefore a transaction can't be rooled back.
+    /* In dev-env, all DB calls are transactional therefore a transaction can't be rolled back.
      * This limitation may be removed in the future.
      */
   }
+  
+  public static Object incrementCounter(String className, 
+      String counterName) {
+    return remoteCall("DSApi", "incrementCounter", className, counterName);
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static long getCounter(String className, 
+      String counterName) {
+    Object res = DSApi.incrementCounter("Counter", counterName);
+    DSApi.commitTx();
+    long counter = -1;
+    if (res instanceof Map<?, ?>) {
+      try {
+        counter = Long.parseLong("" + ((Map<String, Object>)res).get("value"));
+      } catch(Exception exc) {
+        
+      }
+    }
+    return counter;
+  }
+  
+  public Object getDistinctValues(String className) {
+    return remoteCall("DSApi", "getDistinctValues", className);
+  }
+  
+  @SuppressWarnings("unchecked")
+  private static Object convertToDataResult(Object obj) {
+    if (obj instanceof Map<?, ?>) {
+      DataResult dataResult = Util.fromMap((Map<String, Object>)obj, DataResult.class);
+      return dataResult;
+    }
+    return obj;
+  }
+
 }
 
 

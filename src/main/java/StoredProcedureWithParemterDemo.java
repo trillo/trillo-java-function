@@ -20,7 +20,7 @@ public class StoredProcedureWithParemterDemo implements Loggable, TrilloFunction
 
   DELIMITER ;
 
-  The function demonstrates how to invoke the procdure using SDK.
+  The function demonstrates how to invoke the procedure using SDK.
   
   */
 
@@ -45,7 +45,7 @@ public class StoredProcedureWithParemterDemo implements Loggable, TrilloFunction
     params.add(2);
     params.add(100);
     return DSApi.executePrepareStatement("shared.postgres",
-            "CALL transfer(?,?,?)", params , null);
+            "CALL transfer(?,?,?)", params);
   }
 
 }

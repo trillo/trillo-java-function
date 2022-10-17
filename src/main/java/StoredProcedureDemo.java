@@ -1,3 +1,4 @@
+import java.util.List;
 import com.collager.trillo.pojo.Result;
 import com.collager.trillo.pojo.ScriptParameter;
 import com.collager.trillo.util.DSApi;
@@ -18,7 +19,7 @@ public class StoredProcedureDemo implements Loggable, TrilloFunction {
 
   DELIMITER ;
 
-  The function demonstrates how to invoke the procdure using SDK.
+  The function demonstrates how to invoke the procedure using SDK.
   
   */
 
@@ -39,7 +40,7 @@ public class StoredProcedureDemo implements Loggable, TrilloFunction {
 
   private Object _handle(ScriptParameter scriptParameter) {
     return DSApi.executePrepareStatement("auth.vault",
-      "CALL UpdateAllUsers()", null, null);
+      "CALL UpdateAllUsers()", (List<Object>)null);
   }
 
 }
