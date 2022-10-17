@@ -224,6 +224,22 @@ public class LogApi {
     auditLog2(action, "critical", summary, detail, sourceUid, args);
   }
   
+  public static final void auditInfo2(String action, String summary, Object ...args) {
+    auditLog2(action, "info", summary, null, null, args);
+  }
+  
+  public static final void auditWarn2(String action, String summary, Object ...args) {
+    auditLog2(action, "warn", summary, null, null, args);
+  }
+  
+  public static final void auditError2(String action, String summary, Object ...args) {
+    auditLog2(action, "error", summary, null, null, args);
+  }
+  
+  public static final void auditCritical2(String action, String summary, Object ...args) {
+    auditLog2(action, "critical", summary, null, null, args);
+  }
+  
   public static final Result auditInfoR(String action, String summary, Object detail, String sourceUid, Object ...args) {
     auditInfo(action, summary, detail, sourceUid, args);
     return Result.getSuccessResult(summary);
@@ -241,6 +257,26 @@ public class LogApi {
   
   public static final Result auditCriticalR(String action, String summary, Object detail, String sourceUid, Object ...args) {
     auditCritical(action, summary, detail, sourceUid, args);
+    return Result.getFailedResult(summary);
+  }
+  
+  public static final Result auditInfo2R(String action, String summary, Object ...args) {
+    auditInfo2(action, summary, args);
+    return Result.getSuccessResult(summary);
+  }
+  
+  public static final Result auditWarn2R(String action, String summary, Object ...args) {
+    auditWarn2(action, summary, args);
+    return Result.getSuccessResult(summary);
+  }
+  
+  public static final Result auditError2R(String action, String summary, Object ...args) {
+    auditError2(action, summary, args);
+    return Result.getFailedResult(summary);
+  }
+  
+  public static final Result auditCritical2R(String action, String summary, Object ...args) {
+    auditCritical2(action, summary, args);
     return Result.getFailedResult(summary);
   }
   /**
@@ -328,7 +364,7 @@ public class LogApi {
       msg += " " + json;
     }
 
-    _log.log(null, _className, level, s + msg, args, t);
+    _log.log(null, _className, level, msg, args, t);
   }
   
   private static String makeNameValueJson(Object[] args) {
